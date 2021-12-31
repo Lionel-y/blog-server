@@ -22,7 +22,6 @@ export class User {
 
     @Column({
         nullable: false,
-        unique: true,
     })
     username: string;
 
@@ -47,11 +46,6 @@ export class User {
         default: ROLE.USER,
     })
     role: number;
-
-    @Column({
-        default: false,
-    })
-    isDel: boolean;
 
     @OneToMany(() => Article, (article) => article.user)
     pid: Article[];

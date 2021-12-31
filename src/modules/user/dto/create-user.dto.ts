@@ -1,4 +1,5 @@
-import { RoleType } from 'src/types';
+import { RoleType } from "src/types";
+
 
 export class CreateUserDto {
     readonly username: string;

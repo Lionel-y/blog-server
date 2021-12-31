@@ -17,7 +17,7 @@ export class Article {
 
     @BeforeInsert()
     generateUUIDString() {
-        return randomUUID().replace(/-/g, '');
+        this.pid = randomUUID().replace(/-/g, '');
     }
 
     @Column({

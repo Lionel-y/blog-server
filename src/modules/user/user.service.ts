@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/db/entities/user.entity';
+import { TStream } from 'src/transformer';
+import { OPResultTransformer } from 'src/transformer/transformers/optionResult.transformer';
+import { QueryListTransformer } from 'src/transformer/transformers/queryList.tranformer';
 import { OptionResult } from 'src/types';
+
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,9 +17,9 @@ export class UserService {
         private UserRepo: Repository<User>,
     ) {}
 
-    async isExist(identity: { username?: string; uid?: string }) {
+    private async isExist(identity: { username?: string; uid?: string }) {
         const ret = await this.UserRepo.findOne(identity);
-        return ret ? true : false;
+        return !!ret;
     }
     async create(createUserDto: CreateUserDto) {
         const res: OptionResult = {
@@ -32,7 +36,7 @@ export class UserService {
         if (isExist) {
             res.isFail = true;
             res.reason = `username '${user.username}' is already exist`;
-            return res;
+            return new TStream(res).use(OPResultTransformer).value;
         }
         try {
             const ret = await this.UserRepo.insert(user);
@@ -41,18 +45,21 @@ export class UserService {
                 res.reason = undefined;
             }
         } catch (e) {
+            console.log(e);
             res.reason = 'insert user failed';
         }
-        return res;
+        return new TStream(res).use(OPResultTransformer).value;
     }
 
-    async getUser(uid: string, isDel = false) {
-        const ret = await this.UserRepo.find({ uid, isDel });
+    async getUser(uid: string) {
+        const ret = await this.UserRepo.findOne(uid);
         return ret;
     }
 
-    async getAll(isDel = false) {
-        return await this.UserRepo.findAndCount({ isDel });
+    async getAll() {
+        return new TStream(await this.UserRepo.findAndCount()).use(
+            QueryListTransformer,
+        ).value;
     }
 
     async delUser(uid: string) {
@@ -62,14 +69,8 @@ export class UserService {
         };
         const user = await this.UserRepo.findOne(uid);
         if (user) {
-            if (user.isDel) {
-                res.isFail = false;
-                res.reason = 'user has already delete';
-                return res;
-            }
             try {
-                user.isDel = true;
-                const ret = await this.UserRepo.save(user);
+                const ret = await this.UserRepo.remove(user);
                 if (ret) {
                     res.isFail = false;
                     res.reason = undefined;
@@ -83,15 +84,7 @@ export class UserService {
             res.isFail = true;
             res.reason = 'user is not exist';
         }
-        return res;
-    }
-
-    findAll() {
-        return `This action returns all user`;
-    }
-
-    findOne(id: number) {
-        return `This action returns a #${id} user`;
+        return new TStream(res).use(OPResultTransformer).value;
     }
 
     async update(uid: string, updateUserDto: UpdateUserDto) {
@@ -104,7 +97,7 @@ export class UserService {
         if (user) {
             if (this.isExist({ username: updateUserDto.username })) {
                 res.reason = `the username '${updateUserDto.username}' is already in use`;
-                return res;
+                return new TStream(res).use(OPResultTransformer).value;
             }
             user.username = updateUserDto.username && user.username;
             user.password = updateUserDto.password && user.password;
@@ -126,10 +119,11 @@ export class UserService {
         } else {
             res.reason = `the user with id ${uid} does not exist`;
         }
-        return res;
+        return new TStream(res).use(OPResultTransformer).value;
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} user`;
+    async isInUse(username: string) {
+        const res = await this.isExist({ username });
+        return { inUse: res };
     }
 }
