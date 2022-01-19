@@ -17,11 +17,13 @@ import { UserService } from 'src/modules/user/user.service';
 export class ApiUserController {
     constructor(private readonly userService: UserService) {}
 
+    // 获取所有用户列表
     @Get()
     getAll() {
         return this.userService.getAll();
     }
 
+    //
     @Post()
     create(@Body() createUserDto: CreateUserDto) {
         return this.userService.create(createUserDto);

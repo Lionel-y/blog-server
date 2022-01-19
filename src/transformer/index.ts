@@ -1,13 +1,3 @@
-// export function transform(
-//     value: any,
-//     transformers: Array<Transformer<any, any>>,
-// ) {
-//     let result = value;
-//     for (let transform of transformers) {
-//         result = transform(value);
-//     }
-//     return result;
-// }
 import { Transformer } from './types';
 
 function isIterate(v) {
