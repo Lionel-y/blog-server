@@ -1,0 +1,74 @@
+header {
+  height: 60px;
+  white-space: nowrap;
+  box-shadow: 0 0 2px 1px #dcdddd;
+  position: fixed;
+  width: 100%;
+  z-index: 99999;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.header-wrap {
+  height: 100%;
+  max-width: 75rem /* 1200/16 */ ;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-wrap .logo-wrap {
+  height: 100%;
+  line-height: 60px;
+  margin-right: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #004578;
+}
+
+.header-wrap .logo-wrap:hover {
+  transform: scale(1.15);
+  color: #175fa3;
+}
+.header-wrap .logo-wrap span {
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 1.85em;
+  padding: 0 5px;
+  font-weight: bold;
+  font-family: 'jiangxi';
+}
+
+.nav-wrap {
+  height: 100%;
+  line-height: 60px;
+}
+
+.nav-wrap .nav-list {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.nav-wrap .nav-list .nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #004578;
+}
+
+.nav-wrap .nav-list .nav-item a {
+  margin: 0 0.625rem /* 10/16 */;
+  font-size: 1em;
+  font-family: 'jiangxi';
+  transition: all 0.2s;
+}
+.nav-wrap .nav-list .nav-item a:hover {
+  transform: scale(1.15);
+  color: #175fa3;
+}
+.nav-wrap .nav-list .nav-item a i {
+  font-size: inherit;
+}
