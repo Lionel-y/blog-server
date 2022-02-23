@@ -1,0 +1,17 @@
+@url = http://localhost:3000/api/article
+
+@http_proto = HTTP/1.1
+
+### create post
+POST {{url}} {{http_proto}}
+Content-Type: application/json
+
+{
+  "title": "title1",
+  "desc": "desc",
+  "content": "content1",
+  "user": "06a5a674f2f54702a7bc6524fb984009"
+}
+
+### get article list
+GET  {{url}}
