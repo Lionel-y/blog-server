@@ -1,52 +1,52 @@
 import { randomUUID } from 'crypto';
 import {
-    BeforeInsert,
-    Column,
-    CreateDateColumn,
-    Entity,
-    OneToMany,
-    PrimaryColumn,
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryColumn,
 } from 'typeorm';
 import { ROLE } from '../types';
 import { Article } from './article.entity';
 
 @Entity()
 export class User {
-    @PrimaryColumn()
-    uid: string;
+  @PrimaryColumn()
+  uid: string;
 
-    @BeforeInsert()
-    generateUUIDString() {
-        this.uid = randomUUID().replace(/-/g, '');
-    }
+  @BeforeInsert()
+  generateUUIDString() {
+    this.uid = randomUUID().replace(/-/g, '');
+  }
 
-    @Column({
-        nullable: false,
-    })
-    username: string;
+  @Column({
+    nullable: false,
+  })
+  username: string;
 
-    @Column({
-        nullable: false,
-        select: false,
-    })
-    password: string;
+  @Column({
+    nullable: false,
+    select: false,
+  })
+  password: string;
 
-    @Column()
-    tel: string;
+  @Column()
+  tel: string;
 
-    @Column()
-    mail: string;
+  @Column()
+  mail: string;
 
-    @CreateDateColumn()
-    createAt: Date;
+  @CreateDateColumn()
+  createAt: Date;
 
-    @Column({
-        type: 'tinyint',
-        nullable: false,
-        default: ROLE.USER,
-    })
-    role: number;
+  @Column({
+    type: 'tinyint',
+    nullable: false,
+    default: ROLE.USER,
+  })
+  role: number;
 
-    @OneToMany(() => Article, (article) => article.user)
-    pid: Article[];
+  @OneToMany(() => Article, (article) => article.user)
+  pid: Article[];
 }

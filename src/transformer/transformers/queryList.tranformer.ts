@@ -1,11 +1,11 @@
-import { Transformer,ListValue, List } from '../types';
+import { Transformer, ListValue, List } from '../types';
 
 export const QueryListTransformer: Transformer<ListValue, List> = function (
-    value: ListValue,
+  value: ListValue,
 ) {
-    const [data, total] = value;
-    return {
-        data,
-        total,
-    };
+  const [data, total] = value;
+  return {
+    data,
+    total,
+  };
 };

@@ -5,7 +5,7 @@ import { ApiArticleController } from './api.article.controller';
 import { ApiUserController } from './api.user.controller';
 
 @Module({
-    imports: [UserModule, ArticleModule],
-    controllers: [ApiUserController, ApiArticleController],
+  imports: [UserModule, ArticleModule],
+  controllers: [ApiUserController, ApiArticleController],
 })
 export class ApiModule {}

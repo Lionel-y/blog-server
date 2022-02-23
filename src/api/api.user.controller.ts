@@ -1,64 +1,61 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Patch,
-    Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
 } from '@nestjs/common';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
 import { UpdateUserDto } from 'src/modules/user/dto/update-user.dto';
 import { UserService } from 'src/modules/user/user.service';
 
 @Controller({
-    path: 'api/user',
+  path: 'api/user',
 })
 export class ApiUserController {
-    constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
-    // 获取所有用户列表
-    @Get()
-    getAll() {
-        return this.userService.getAll();
-    }
+  // 获取所有用户列表
+  @Get()
+  getAll() {
+    return this.userService.getAll();
+  }
 
-    //
-    @Post()
-    create(@Body() createUserDto: CreateUserDto) {
-        return this.userService.create(createUserDto);
-    }
+  //
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.userService.create(createUserDto);
+  }
 
-    @Get(':uid')
-    getUser(@Param('uid') uid: string) {
-        return this.userService.getUser(uid);
-    }
+  @Get(':uid')
+  getUser(@Param('uid') uid: string) {
+    return this.userService.getUser(uid);
+  }
 
-    @Get('/isinuse/:username')
-    isInUse(@Param('username') username: string) {
-        return this.userService.isInUse(username);
-    }
+  @Get('/isinuse/:username')
+  isInUse(@Param('username') username: string) {
+    return this.userService.isInUse(username);
+  }
 
-    @Get('getDelUser/:uid')
-    getDelUser(@Param('uid') uid: string) {
-        return this.userService.getUser(uid);
-    }
+  @Get('getDelUser/:uid')
+  getDelUser(@Param('uid') uid: string) {
+    return this.userService.getUser(uid);
+  }
 
-    @Get('getDelUser')
-    getAllDelUser() {
-        return this.userService.getAll();
-    }
+  @Get('getDelUser')
+  getAllDelUser() {
+    return this.userService.getAll();
+  }
 
-    @Delete(':uid')
-    delUser(@Param('uid') uid: string) {
-        return this.userService.delUser(uid);
-    }
+  @Delete(':uid')
+  delUser(@Param('uid') uid: string) {
+    return this.userService.delUser(uid);
+  }
 
-    @Patch(':uid')
-    updateUser(
-        @Param('uid') uid: string,
-        @Body() updateUserDto: UpdateUserDto,
-    ) {
-        return this.userService.update(uid, updateUserDto);
-    }
+  @Patch(':uid')
+  updateUser(@Param('uid') uid: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(uid, updateUserDto);
+  }
 }
