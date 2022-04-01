@@ -14,4 +14,8 @@ Content-Type: application/json
 }
 
 ### get article list
-GET  {{url}}
+GET  {{url}}?type=brief
+
+
+###
+GET https://translate.google.cn/?hl=zh-CN&tab=TT#view=home&op=translate&sl=en&tl=zh-CN&text=测试

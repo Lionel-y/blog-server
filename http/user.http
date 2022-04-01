@@ -6,10 +6,8 @@ POST {{url}} {{http_proto}}
 Content-Type: application/json
 
 {
-  "username": "user3",
-  "password": "123",
-  "tel": "123",
-  "mail": "123"
+  "username": "Lionel2",
+  "password": "yzsYZS"
 }
 
 ### get user list

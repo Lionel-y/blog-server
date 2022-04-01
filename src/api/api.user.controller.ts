@@ -26,6 +26,7 @@ export class ApiUserController {
   //
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
+    console.log('create user', createUserDto);
     return this.userService.create(createUserDto);
   }
 

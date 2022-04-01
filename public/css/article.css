@@ -1,0 +1,134 @@
+main {
+  width: 100%;
+  background-color: #eaf4fc;
+  min-height: 100vh;
+  padding-top: 60px;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+}
+.content-wrap {
+  max-width: 75rem /* 1200/16 */;
+  margin: 0 auto;
+  min-height: calc(100vh - 100px);
+  box-sizing: border-box;
+  padding: 40px;
+  margin-top: 10px;
+  overflow: hidden;
+  background-color: #fff;
+}
+.head-wrap {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.head-wrap .title {
+  font-family: jiangxi;
+  font-size: 1.55rem;
+  /* font-weight: 600; */
+  color: #106898;
+  margin: 20px 0;
+}
+
+.head-wrap .article-info,
+.article-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.75rem;
+  color: #6b798e;
+  margin-bottom: 10px;
+}
+
+.head-wrap .article-info li:not(:last-child),
+.article-status li:not(:last-child) {
+  margin-right: 20px;
+}
+
+.article-content {
+  font-family: jiangxi !important;
+  padding: 0 1.25rem /* 20/16 */;
+  box-sizing: border-box;
+  margin-bottom: 2.5rem /* 40/16 */ /* 20/16 */;
+}
+.hr-twill {
+  border: 0;
+  padding: 3px;
+  background: repeating-linear-gradient(
+    135deg,
+    #a2a9b6 0px,
+    #a2a9b6 1px,
+    transparent 1px,
+    transparent 6px
+  );
+}
+.footer {
+  padding: 1.25rem /* 20/16 */;
+}
+
+.footer .article-other-info {
+  font-size: 0.9rem;
+  font-family: 'Source Han Sans CN';
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer .article-other-info .info-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #9a9c9c;
+}
+.footer .article-other-info .info-item .iconfont {
+  margin-right: 4px;
+}
+.footer .article-other-info .info-item .info-key {
+  margin-right: 8px;
+}
+.footer .article-other-info .info-item .info-value {
+  display: inline-block;
+  cursor: pointer;
+  background-color: #00bcf2;
+  color: #fff;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+.footer .article-other-info .info-item .info-value:hover {
+  background-color: #2dc3ec;
+}
+.footer .article-other-info .article-tags .tags {
+  display: flex;
+}
+.footer .article-other-info .article-tags .tags .tag:not(:last-child) {
+  margin-right: 4px;
+}
+
+.footer .like-btn {
+  width: 3.75rem; /* 60/16 */
+  height: 3.75rem /* 60/16 */;
+  border-radius: 50%;
+  background-color: #efefef;
+  text-align: center;
+  overflow: hidden;
+  line-height: 3.75rem /* 60/16 */;
+  white-space: nowrap;
+  margin: 1.25rem /* 20/16 */ auto;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+.footer .like-btn .iconfont {
+  font-size: 1.5rem;
+  color: #9aa7b1;
+  transition: all 0.4s;
+  display: inline-block;
+}
+.footer .like-btn:hover:hover {
+  background-color: #e1f5fe;
+}
+.footer .like-btn:hover .iconfont {
+  /* font-size: 1.75rem; */
+  transform: scale(1.3);
+  color: #4fc3f7;
+}

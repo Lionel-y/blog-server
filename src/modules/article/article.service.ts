@@ -7,7 +7,8 @@ import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { QueryListTransformer } from 'src/transformer/transformers/queryList.tranformer';
-import { ArticleInfoTransformer } from 'src/transformer/transformers/articleInfo.transformer';
+import { TagMapService } from '../tagMap/tagMap.service';
+import { CategoryService } from '../category/category.service';
 
 @Injectable()
 export class ArticleService {
@@ -16,17 +17,30 @@ export class ArticleService {
     private ArticleRepo: Repository<Article>,
     @Inject(UserService)
     private userService: UserService,
+    @Inject(TagMapService)
+    private tagMapService: TagMapService,
+    @Inject(CategoryService)
+    private categoryService: CategoryService,
   ) {}
 
   async create(createArticleDto: CreateArticleDto) {
     const article = new Article();
     article.title = createArticleDto.title;
     article.desc = createArticleDto.desc;
-    article.content = createArticleDto.desc;
-    const author = await this.userService.getUser(createArticleDto.user);
-    article.user = author;
-    const ret = await this.ArticleRepo.insert(article);
-    return !!ret;
+    article.content = createArticleDto.content;
+    article.author = '0fbc1686fbb44d30b3088333bb4fb0c5';
+    const category = await this.categoryService.getCategoryByName(
+      createArticleDto.category,
+    );
+    article.category = category;
+    const ret = await this.ArticleRepo.save(article);
+    const pid = article.pid;
+    const tags = createArticleDto.tags;
+    // 创建 文章<->标签 映射
+    if (tags.length > 0) {
+      await this.tagMapService.create(pid, tags);
+    }
+    return ret;
   }
 
   async getListByUser(uid: string) {
@@ -39,14 +53,24 @@ export class ArticleService {
     return ret;
   }
 
-  async getList() {
-    const res = await this.ArticleRepo.findAndCount({
-      relations: ['user'],
-    });
-    const ret = new TStream(res)
-      .use(QueryListTransformer)
-      .map(ArticleInfoTransformer, { property: 'data' }).value;
-
+  async getAll(isBrief = false) {
+    if (isBrief) {
+      const ret = await this.ArticleRepo.findAndCount({
+        select: [
+          'pid',
+          'title',
+          'desc',
+          'views',
+          'likes',
+          'author',
+          'create_at',
+          'update_at',
+          'category',
+        ],
+      });
+      return ret;
+    }
+    const ret = await this.ArticleRepo.createQueryBuilder('article');
     return ret;
   }
 }

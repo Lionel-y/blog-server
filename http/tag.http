@@ -1,0 +1,14 @@
+@url = http://localhost:3000/api/tag
+@http_proto = HTTP/1.1
+
+### create tag
+
+POST  {{url}} {{http_proto}}
+Content-Type: application/json
+
+{
+  "tag_name": "Node.js"
+}
+
+### get all tags
+GET {{url}} {{http_proto}} 

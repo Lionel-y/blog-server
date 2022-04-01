@@ -1,4 +1,4 @@
-header {
+#header {
   height: 60px;
   white-space: nowrap;
   box-shadow: 0 0 2px 1px #dcdddd;
@@ -11,7 +11,7 @@ header {
 
 .header-wrap {
   height: 100%;
-  max-width: 75rem /* 1200/16 */ ;
+  max-width: 75rem /* 1200/16 */;
   margin: 0 auto;
   display: flex;
   align-items: center;
@@ -24,7 +24,7 @@ header {
   margin-right: 10px;
   cursor: pointer;
   transition: all 0.2s;
-  color: #004578;
+  color: #4994c4;
 }
 
 .header-wrap .logo-wrap:hover {
@@ -56,7 +56,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #004578;
+  color: #4994c4;
 }
 
 .nav-wrap .nav-list .nav-item a {

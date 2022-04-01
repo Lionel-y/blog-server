@@ -1,0 +1,32 @@
+@url = http://localhost:3000/api/category
+@http_proto = HTTP/1.1
+
+### create category
+
+POST {{url}} {{http_proto}}
+Content-Type: application/json
+
+{
+  "category_name": "111"
+}
+
+
+### get category
+GET {{url}} {{http_proto}}
+
+### get category by id
+GET {{url}}/123
+
+### get category by name
+
+GET  {{url}}/name/默认分类7 {{http_proto}}
+
+
+### batch delete
+
+POST  {{url}}/batchDelete {{http_proto}}
+Content-Type: application/json
+
+{
+  "cids": ["d56649f7901e4344b15fc20b22a2d08e","33c7b04f438d43a9b69853f003ee95d3"]
+}

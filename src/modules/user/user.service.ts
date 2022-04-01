@@ -29,8 +29,8 @@ export class UserService {
     const user = new User();
     user.username = createUserDto.username;
     user.password = createUserDto.password;
-    user.tel = createUserDto.tel;
-    user.mail = createUserDto.mail;
+    // user.tel = createUserDto.tel;
+    // user.mail = createUserDto.mail;
     createUserDto.role && (user.role = createUserDto.role);
     const isExist = await this.isExist({ username: user.username });
     if (isExist) {
@@ -101,8 +101,8 @@ export class UserService {
       }
       user.username = updateUserDto.username && user.username;
       user.password = updateUserDto.password && user.password;
-      user.mail = updateUserDto.mail && user.mail;
-      user.tel = updateUserDto.tel && user.tel;
+      // user.mail = updateUserDto.mail && user.mail;
+      // user.tel = updateUserDto.tel && user.tel;
       user.role = updateUserDto.role && user.role;
 
       try {
