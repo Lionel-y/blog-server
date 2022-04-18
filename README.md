@@ -1,73 +1,195 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+## 2022 04 08 Note
+- 创建Tag相关api 
+- 重构部分查询api
+- 整理Article、Tag、Category 相关的依赖关系
+- 为了避免出现循环注入，计划将Article provide出去给其他Provider使用
+  - 这里主要原因是因为在查询对应分类或标签详细信息时，需要查询相关的文章信息，但文章信息是由多张表整合的，因此这里选择将共享的部分——Article对外提供 这样可以减少重复的代码逻辑
+  - 而Article中用到的其他表相关的操作将通过注入Repo实现
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 2022 04 10 Note
 
-## Description
+- 开始处理控制面板的数据展示数据
+- 需要用到的数据源
+  - 总的浏览量
+  - 总点赞量
+  - 总评论量
+  - 文章总数
+  - 每日阅读量
+  - 每日点赞数
+  - 每日评论数
+  - 每日文章数 
+- 问题分析
+  - 数据源部分主要分为以下三个板块
+    - 卡片信息展示
+    - 各类数据涨势图表
+    - 日贡献图
+  - 卡片信息展示
+    - 相关数据
+      - 总浏览量
+      - 总点赞数
+      - 总评论数
+      - 总文章数 
+      - 当日浏览量
+      - 当日点赞数
+      - 当日评论数
+      - 当日新增文章数
+    - 解决方案
+      - 通过sql语句查询 去count和sum article 表中相关的数据 如
+        - 总浏览量：sum(article.views)
+        - 总点赞数：sum(article.likes)
+        - 总评论数：count(comments.id)
+        - 总文章数：count(article.id)
+        - 当日浏览量：暂未解决（计划创建新表）
+        - 当日点赞数：同上
+        - 当日评论数：根据comment表中的create字段进行筛选
+        - 当日新增文章数：根据article中的create_at字段进行筛选统计
+  - 趋势图标展示
+    - 相关数据
+      - 七日内每日数据
+    - 解决方案
+      - 预估还是需要一个新的表来进行记录
+  - 每日贡献
+    - 相关数据
+      - 每日发布文章数
+    - 解决方案
+      - 通过sql语句针对文章进行group
+- 痛点 
+  - views likes 这两类数据是作为article的附加属性携带在article上的，只是article上的一个变量，在获取当日相关数据时，由于其属性没有相关的日期记录，无法进行每日数据统计
+- 解决方案
+  - 专门新建一张表（blog_data）、用于记录每日数据
+    - 表格式
+      - record_date: 日期
+      - views_count: 当日浏览量
+      - likes_count: 当日点赞数
+      - articles_count: 当日文章数
+      - comments_count: 当日评论数
+  - 用户新建文章、内容被点赞、浏览等操作将新增一个前置行为（计划使用nestjs中的interceptor进行实现，尽量减少行为间的逻辑耦合） 对数据进行更新
+    ```typescript
+    import { APP_INTERCEPTOR } from '@nestjs/core';
+    @Module({
+      providers: [
+        ConfigService,
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: HttpInterceptor,
+        },
+      ],
+    })
+    export class YourModule {}
+    ```
+    - 新建文章
+      1. 前端页面创建好文章表单信息并提交
+      2. 后端针对用户提交的数据进行文章信息的保存
+      3. 在文章创建行为成功完成后，对 blog_data 中的数据进行更新，主要字段为 articles_count 
+      4. 返回操作结果
+    - 删除文章（这里计划将点赞行为和文章进行解绑，文章删除后，由于点赞数据并没被取消，因此计划不对数据进行删除，只对文章进行删除）
+      1. 前端发起删除请求
+      2. 后端操作数据库将对应文章进行删除
+      3. 点赞数据不进行处理
+    - 文章点赞
+      1. 前端发起点赞请求
+      2. 对 article 中的like字段自增
+      3. 对blog_data数据进行操作
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+....
 
-## Installation
+## 解决思路
 
-```bash
-$ npm install
-```
+这里将 总的数据 和 每日数据 进行区分 避免产生冲突 BlogData 表仅仅当作每日数据登记（登记） 这里应该改名成DailyCount更好点（后续改进）
 
-## Running the app
+当用户进行控制面板数据查询的时候，如果没有查询到当日数据 则以0返回 不会对不存在表中的数据进行任何多余的创建操作 只有用户对文章增删操作的时候再进行记录
 
-```bash
-# development
-$ npm run start
 
-# watch mode
-$ npm run start:dev
+## 2022 04 15
 
-# production mode
-$ npm run start:prod
-```
+### 问题记录
 
-## Test
+- 这次遇到的问题主要是如何设计一个无登录的用户系统
+- 主要场景如下
+  - 给每一个游客提供一个无登录的账户系统 用于给用户提供点赞 评论等功能
+### 计划方案如下
 
-```bash
-# unit tests
-$ npm run test
+- 用户角色分为三类
+  - admin：站长 即建站人 可以进行后台管理、文章发布等
+  - user: 普通用户 可以点赞文章 评论文章
+  - guest: 游客 可以浏览文章（不记录在后台中）
 
-# e2e tests
-$ npm run test:e2e
+权限分布如下
 
-# test coverage
-$ npm run test:cov
-```
+| 权限\角色 | admin | user  | guester |
+| :-------: | :---: | :---: | :-----: |
+| 浏览文章  |   √   |   √   |    √    |
+| 删除文章  |   √   |       |         |
+| 修改文章  |   √   |       |         |
+| 点赞文章  |   √   |   √   |         |
+| 创建文章  |   √   |       |         |
+| 浏览标签  |   √   |   √   |    √    |
+| 删除标签  |   √   |       |         |
+| 创建标签  |   √   |       |         |
+| 浏览分类  |   √   |   √   |    √    |
+| 删除分类  |   √   |       |         |
+| 修改分类  |   √   |       |         |
+| 创建分类  |   √   |       |         |
+| 浏览评论  |   √   |   √   |    √    |
+| 发表评论  |   √   |   √   |         |
+| 删除评论  |   √   |       |         |
 
-## Support
+## 注意 
+其中admin用户以及user用户将会记录在表中 而guest用户则不保存
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+为了用户登录的便捷性 user用户只需要提交用户名 邮箱等信息则可创建账号 同时无需密码 默认使用邮箱账号作为密码进行使用
 
-## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
+## 评论功能设计
 
-Nest is [MIT licensed](LICENSE).
+### 主要内容
+  - 评论
+  - 回复
+
+### 评论
+- 评论主要针对文章发表评论
+- 回复主要是评论区中的回复
+
+
+
+## 问题记录 2022 04 16
+
+-  原本计划通过用户邮箱创建一个无注册登录的账户系统 但实现过程中出现以下问题
+   -  由于系统没有注册机制 导致系统只能通过 用户名<-->用户邮箱 这样的唯一绑定来进行身份认证 同时登录系统将会在数据库中如果没查询到用户数据将会自动进行注册操作
+   -  但是由于评论系统中不允许不同用户使用相同的 username 进行评论 因此用户注册的时候不能产生相同的用户名
+   -  因此综上 在用户登录的时候如果出现 用户名<-->用户邮箱 绑定验证失败的情况下 不好判断用户到底是用户名错误还是邮箱错误
+
+- 为解决上述问题 决定采用 ———— **邮箱唯一原则**
+- 具体解决方案如下
+  - 首先用户提交登录验证将出现以下几种情况
+    - 用户名和邮箱绑定验证成功 -> 正常登录
+    - 根据用户名查到对应用户但邮箱不对应 且对应邮箱能够查询到对应用户 -> 根据邮箱唯一原则 提示用户名错误
+    - 根据用户名查到对应用户 且 对应邮箱不能查到对应用户 -> 根据邮箱唯一原则 提示创建账户失败 用户名已使用
+    - 根据邮箱能够查询到对应账户 但是用户名不正确 -> 提示用户名错误
+    - 都查询不到 -> 创建用户
+
+
+### email 唯一原则
+
+<!-- pass -->
+- 查询 WHERE username OR email
+  - 如果没有结果 -> 插入数据 -> 登录成功
+  - 如果只有一个结果
+    - email 和提交的 email 相同
+      - username 和提交的 username 相同 -> 登录成功
+      - username 和提交的 username 不同 -> 用户名错误
+    - email 和提交的 email 不同
+      - 则说明是根据username查询出的结果 -> 创建用户失败 用户名已存在
+  - 如果有两个结果 -> 用户名错误
+
+
+- 查询 WHERE email
+  - 有结果
+    - username !== 提交的username -> 用户名错误
+    - username === 提交的username -> 登录成功
+  - 无结果
+    - 查询 WHERE username
+      - 有结果 -> 创建失败 用户名已存在
+      - 无结果 -> 创建账户 -> 登录成功

@@ -1,0 +1,54 @@
+@url = http://localhost:3000/api
+@http_proto = HTTP/1.1
+
+### create user
+POST {{url}}/user {{http_proto}}
+Content-Type: application/json
+
+{
+  "username": "Lionel",
+  "password": "yzsYZS"
+}
+
+### create category
+
+POST {{url}}/category {{http_proto}}
+Content-Type: application/json
+
+{
+  "category_name": "默认分类"
+}
+### create category
+
+POST {{url}}/category {{http_proto}}
+Content-Type: application/json
+
+{
+  "category_name": "测试1"
+}
+### create category
+
+POST {{url}}/category {{http_proto}}
+Content-Type: application/json
+
+{
+  "category_name": "测试2"
+}
+
+
+### create tag
+
+POST  {{url}}/tag {{http_proto}}
+Content-Type: application/json
+
+{
+  "tag_name": "Node.js"
+}
+### create tag
+
+POST  {{url}}/tag {{http_proto}}
+Content-Type: application/json
+
+{
+  "tag_name": "JavaScript"
+}

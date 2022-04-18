@@ -2,13 +2,30 @@
 @http_proto = HTTP/1.1
 
 ### create user
-POST {{url}} {{http_proto}}
+POST {{url}}/create/admin {{http_proto}}
 Content-Type: application/json
 
 {
-  "username": "Lionel2",
-  "password": "yzsYZS"
+  "username": "Lionel",
+  "password": "yzsYZS",
+  "email": "y_lionel@163.com"
 }
 
 ### get user list
-GET {{url}} {{http_proto}}
+POST  {{url}}/test {{http_proto}}
+Content-Type: application/json
+
+{
+  "username": "Lionel",
+  "email": "y_lionel@163.com"
+}
+
+
+### 
+POST http://localhost:3000/auth/admin/login {{http_proto}}
+Content-Type: application/json
+
+{
+  "username": "Lionel",
+  "password": "yzsYZS"
+}

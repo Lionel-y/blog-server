@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Article } from 'src/db/entities/article.entity';
-import { CategoryModule } from '../category/category.module';
+import { Article } from 'src/db/entities/Article.entity';
+import { Category } from 'src/db/entities/Category.entity';
+import TagMap from 'src/db/entities/TagMap.entity';
+import { TagMapView } from 'src/db/entities/TagMap.view.entity';
+import { BlogDataModule } from '../blogData/blogData.module';
+import { CommentModule } from '../comment/comment.module';
 import { TagMapModule } from '../tagMap/tagMap.module';
 import { UserModule } from '../user/user.module';
 import { ArticleController } from './article.controller';
@@ -9,10 +13,11 @@ import { ArticleService } from './article.service';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Article]),
+    TypeOrmModule.forFeature([Article, TagMapView, TagMap, Category]),
     UserModule,
     TagMapModule,
-    CategoryModule,
+    BlogDataModule,
+    CommentModule,
   ],
   controllers: [ArticleController],
   providers: [ArticleService],

@@ -1,0 +1,235 @@
+<html lang='en'>
+
+  <head>
+    <meta charset='UTF-8' />
+    <meta http-equiv='X-UA-Compatible' content='IE=edge' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Document</title>
+    <link rel='stylesheet' href='/public/css/color.css' />
+    <link rel='stylesheet' href='public/css/reset.css' />
+    <link
+      rel='stylesheet'
+      href='//at.alicdn.com/t/font_3172047_1f0ezv7tmbe.css'
+    />
+    <link rel='stylesheet' href='/public/css/home.css' />
+    <script src='https://unpkg.com/axios/dist/axios.min.js'></script>
+    <script src='/public/js/home.js'></script>
+  </head>
+
+  <body>
+
+    <!-- header start -->
+    <div class='header-box'>
+      <header class='header'>
+        <div class='header-wrap'>
+          <div class='header-left'>
+            <h1>Lionel's Blog</h1>
+          </div>
+          <nav class='header-right'>
+            <ul>
+              <li>
+                <i class='iconfont icon-home'></i>
+                <a href='/'>首页</a>
+              </li>
+              <li>
+                <i class='iconfont icon-categories'></i>
+                <a href='/'>分类</a>
+              </li>
+              <li>
+                <i class='iconfont icon-tags'></i>
+                <a href='/'>标签</a>
+              </li>
+              <li>
+                <i class='iconfont icon-about'></i>
+                <a href='/'>关于</a>
+              </li>
+              <li id='user-status'>
+                <div class='login-btn' onclick='toggleLogin()'>
+                  <i class='iconfont icon-login'></i>
+                  <a>登录</a>
+                </div>
+                <div class='user-info'>
+                  <i class='iconfont icon-author'></i>
+                  <a id='username'></a>
+                </div>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
+    </div>
+    <!-- header end -->
+    <main class='main'>
+      <div class='main-wrap'>
+
+        <section>
+          <div class='article-list-wrap'>
+            {{#if articles}}
+              {{#each articles}}
+                <!-- article item start -->
+                <div class='article-wrap'>
+                  <div class='article-wrap__left'>
+                    <div class='top'>
+                      <div class='author'>
+                        <i class='iconfont icon-author'></i>
+                        <span>Lionel</span>
+                      </div>
+                      <div class='create-at'>
+                        <i class='iconfont icon-date'></i>
+                        <span>{{date create_at}}</span>
+                      </div>
+                    </div>
+                    <a class='content' href='/article/{{pid}}' onclick="gotoArticle('{{pid}}')">
+                      <h2 class='title'>{{title}}</h2>
+                      <p class='desc'>{{desc}}</p>
+                    </a>
+                    <div class='bottom'>
+                      <div class='bottom-left'>
+                        <div class='category'>
+                          <span>{{category}}</span>
+                        </div>
+                        <div class='tags'>
+                          {{#each tags}}
+                            <span>{{this}}</span>
+                          {{/each}}
+                        </div>
+                      </div>
+                      <div class='bottom-right'>
+                        <span>{{views}}次阅读</span>
+                        <span>{{likes}}次点赞</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class='article-wrap__right'>
+                    <a class='article-image' href='#'>
+                      <img
+                        src='https://miro.medium.com/max/875/1*OopYN41vmKE15KGBBDWTDA.png'
+                        alt=''
+                      />
+                    </a>
+                  </div>
+                </div>
+                <!-- article item end -->
+              {{/each}}
+            {{/if}}
+            {{#unless articles}}
+              <div class='empty'>Ops! No Articles</div>
+            {{/unless}}
+          </div>
+          <div class='placeholder'></div>
+        </section>
+        <aside>
+          <div class='info-card'>
+            <div class='title'>
+              <h3>热门文章</h3>
+            </div>
+            <div class='content-wrap'>
+              <div class='hot-articles'>
+                {{#if hotArticles}}
+                  {{#each hotArticles}}
+                    <!-- hot article start -->
+                    <a class='hot-article-item' href='/article/{{pid}}'>
+                      <div class='article-info'>
+                        <h4 class='title'>{{title}}</h4>
+                        <div class='hot-info'>
+                          <span>{{views}}阅读</span>
+                          <span>{{likes}}点赞</span>
+                        </div>
+                      </div>
+                    </a>
+                    <!-- hot article end -->
+                  {{/each}}
+                {{/if}}
+                {{#unless hotArticles}}
+                  <div class='empty'>Ops! No Data!</div>
+                {{/unless}}
+
+              </div>
+            </div>
+          </div>
+          <div class='info-card'>
+            <div class='title'>
+              <h3>标签云</h3>
+            </div>
+
+            <div class='content-wrap'>
+              {{#if tags}}
+                <div class='tags-wrap'>
+                  {{#each tags}}
+                    <a href='/tag/{{tid}}' class='tag'>{{tag_name}}</a>
+
+                  {{/each}}
+                </div>
+              {{/if}}
+              {{#unless tags}}
+                <div class='empty'>Ops! No Data!</div>
+              {{/unless}}
+            </div>
+          </div>
+          <div class='info-card'>
+            <div class='title'>
+              <h3>其他</h3>
+            </div>
+            <div class='content-wrap'>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+    <div id='login-wrap'>
+      <div class='mask'></div>
+      <div class='content'>
+        <div class='header'>
+          <h3 class='title'>登录</h3>
+          <button class='close-btn' onclick='toggleLogin()'>
+            <i class='iconfont icon-cancle'></i>
+          </button>
+        </div>
+        <div class='login-form'>
+          <form class='form-wrap' id='login-form'>
+            <div class='input-wrap'>
+              <input
+                type='text'
+                id='usernameInput'
+                class='input'
+                name='username'
+                placeholder='请输入用户名'
+                value=''
+                onfocus='handleInputFocus()'
+              />
+              <div class='message' id='input-message'>ceshi</div>
+            </div>
+            <div class='input-wrap'>
+              <input
+                type='email'
+                id='passwordInput'
+                class='input'
+                name='email'
+                placeholder='请输入邮箱'
+                value=''
+              />
+            </div>
+            <div class='is-admin'>
+              <input
+                type='checkbox'
+                onchange='onIsAdminChange()'
+                name='isAdmin'
+                id='isAdmin'
+              />
+              <span>我是管理员</span>
+            </div>
+          </form>
+          <div class='notice'>
+            <p class='notice-header'>注意事项</p>
+            <ul class='notice-content'>
+              <li>普通用户无需注册，输入自定义用户名和邮箱即可自动创建账号</li>
+              <li>为了您能够正常的发表与接收评论，请填写正在使用的邮箱。</li>
+            </ul>
+          </div>
+          <button class='submit-btn' onclick='handleSubmit()'>登录</button>
+        </div>
+      </div>
+    </div>
+  </body>
+
+</html>

@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Article } from 'src/db/entities/article.entity';
-import { Category } from 'src/db/entities/category.entity';
+import { Article } from 'src/db/entities/Article.entity';
+import { Category } from 'src/db/entities/Category.entity';
 import { In, Not, Repository } from 'typeorm';
+import { ArticleService } from '../article/article.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Injectable()
@@ -12,17 +13,39 @@ export class CategoryService {
     private CategoryRepo: Repository<Category>,
     @InjectRepository(Article)
     private ArticleRepo: Repository<Article>,
+    @Inject(ArticleService)
+    private articleService: ArticleService,
   ) {}
 
-  async getAll() {
-    const ret = await this.CategoryRepo.findAndCount({
-      order: { createAt: 'ASC' },
-    });
-    return ret;
+  private async getCategoryDetailInfo(category: Category) {
+    const articles = await this.articleService.getArticlesByCategory(category);
+    return {
+      ...category,
+      articles: articles || [],
+    };
   }
-  async getCategoryByName(name: string) {
+
+  async getCategoryByName(name: string, isBrief) {
     const category = await this.CategoryRepo.findOne({ category_name: name });
-    return category;
+    if (isBrief) {
+      return category;
+    }
+    return category !== null
+      ? await this.getCategoryDetailInfo(category)
+      : category;
+  }
+
+  async getCategoryByCid(cid: string, isBrief = false) {
+    const category = await this.CategoryRepo.findOne({ cid });
+    if (isBrief) {
+      return category;
+    }
+    return await this.getCategoryDetailInfo(category);
+  }
+
+  async getAll() {
+    const ret = await this.CategoryRepo.findAndCount();
+    return ret;
   }
 
   async create(CreateCategoryDto: CreateCategoryDto) {
@@ -55,8 +78,8 @@ export class CategoryService {
       articles.map((article) => {
         article.category = defaultCategory;
       });
+      await this.ArticleRepo.save(articles);
     }
-    this.ArticleRepo.save(articles);
     const ret = await this.CategoryRepo.remove(categories);
     return ret;
   }

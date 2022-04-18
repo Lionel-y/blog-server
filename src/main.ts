@@ -7,7 +7,7 @@ import { ErrorsInterceptor } from './interceptor/exception.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  app.useGlobalInterceptors(new ErrorsInterceptor());
+  // app.useGlobalInterceptors(new ErrorsInterceptor());
   app.useStaticAssets(join(__dirname, '..', 'admin', 'build', 'static'), {
     prefix: '/static',
   });
@@ -19,6 +19,13 @@ async function bootstrap() {
   app.setViewEngine('hbs');
 
   hbs.registerPartials(join(__dirname, '..', 'views', 'partials'));
+  hbs.registerHelper('date', (currentDate) => {
+    if (currentDate) {
+      return new Date(currentDate).toLocaleDateString('zh-CN');
+    } else {
+      return '';
+    }
+  });
 
   await app.listen(3000);
 }

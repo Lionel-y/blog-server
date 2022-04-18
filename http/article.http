@@ -1,6 +1,10 @@
 @url = http://localhost:3000/api/article
 
 @http_proto = HTTP/1.1
+### test
+GET {{url}}/test {{http_proto}}
+
+
 
 ### create post
 POST {{url}} {{http_proto}}
@@ -14,8 +18,11 @@ Content-Type: application/json
 }
 
 ### get article list
-GET  {{url}}?type=brief
+GET  {{url}}/getByCid?cid=03bfd178f1d7421e89abed5459150c85
 
+
+### get article list
+GET {{url}}?type=brief {{http_proto}}
 
 ###
 GET https://translate.google.cn/?hl=zh-CN&tab=TT#view=home&op=translate&sl=en&tl=zh-CN&text=测试

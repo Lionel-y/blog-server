@@ -12,3 +12,12 @@ Content-Type: application/json
 
 ### get all tags
 GET {{url}} {{http_proto}} 
+
+### get tag by name
+GET {{url}}/name/测试 HTTP/1.1
+
+
+
+### get tag info by tid
+
+GET {{url}}/5a6847112f354009b5de39a2101ed3e0 HTTP/1.1

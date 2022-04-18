@@ -30,3 +30,6 @@ Content-Type: application/json
 {
   "cids": ["d56649f7901e4344b15fc20b22a2d08e","33c7b04f438d43a9b69853f003ee95d3"]
 }
+
+### get detail
+GET  {{url}}/5d9b2173edab41a48ce472dc84e710aa {{http_proto}}

@@ -4,8 +4,11 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ApiModule } from './api/api.module';
+import { ApiModule } from './modules/api/api.module';
 import { join } from 'path';
+import { ArticleModule } from './modules/article/article.module';
+import { TagModule } from './modules/tag/tag.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 const ENV = process.env.NODE_ENV;
 @Module({
@@ -29,6 +32,9 @@ const ENV = process.env.NODE_ENV;
       serveRoot: '/admin',
     }),
     ApiModule,
+    ArticleModule,
+    TagModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
