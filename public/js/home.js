@@ -6,10 +6,14 @@ window.onload = () => {
     axios.get('/api/user/profile').then((res) => {
       const data = res.data;
       if (data && data.statusCode === 200) {
+        if (data.data.user.role === 0) {
+          const adminEl = document.querySelector('#dashboard');
+          adminEl.classList.add('show');
+        }
         const logginStatus = document.querySelector('#user-status');
         const usernameEl = document.querySelector('#username');
         logginStatus.classList.add('logined');
-        usernameEl.innerHTML = data.data.username;
+        usernameEl.innerHTML = data.data.user.username;
       }
     });
   }
@@ -23,7 +27,7 @@ function onIsAdminChange() {
     passwordInput.setAttribute('name', 'password');
     passwordInput.setAttribute('placeholder', '请输入密码');
   } else {
-    passwordInput.setAttribute('name', 'password');
+    passwordInput.setAttribute('name', 'email');
     passwordInput.setAttribute('placeholder', '请输入邮箱');
   }
 }
@@ -43,6 +47,18 @@ function handleSubmit() {
   form.forEach((value, key) => (data[key] = value));
   if (isAdmin) {
     // 管理员登录接口
+    axios.post('/auth/admin/login', data).then((res) => {
+      const data = res.data;
+      if (data && data.success) {
+        window.localStorage.setItem('access_token', data.access_token);
+        location.href = '/';
+      } else {
+        const msg = data.msg;
+        inputMsg.classList.add('error');
+        inputEl.classList.add('error');
+        inputMsg.innerHTML = msg || '服务器错误';
+      }
+    });
   } else {
     axios.post('/auth/user/login', data).then((res) => {
       const data = res.data;

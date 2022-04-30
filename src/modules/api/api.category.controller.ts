@@ -12,6 +12,8 @@ import { FetchListResponseInterceptor } from 'src/interceptor/fetchListResponse.
 import { OperationResponseInterceptor } from 'src/interceptor/operationResponse.interceptor';
 import { CategoryService } from 'src/modules/category/category.service';
 import { CreateCategoryDto } from 'src/modules/category/dto/create-category.dto';
+import { Roles } from '../auth/decorator/role.decorator';
+import { ROLE } from '../auth/role.enum';
 
 type QueryType = 'brief' | 'detail';
 
@@ -19,12 +21,15 @@ type QueryType = 'brief' | 'detail';
 export class ApiCategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
-  @UseInterceptors(OperationResponseInterceptor)
   @Post()
+  @Roles(ROLE.ADMIN)
+  @UseInterceptors(OperationResponseInterceptor)
   createCategory(@Body() createCategoryDto: CreateCategoryDto) {
     return this.categoryService.create(createCategoryDto);
   }
+
   @Post('/batchDelete')
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(OperationResponseInterceptor)
   batchDelete(@Body() data: { allDel: boolean; cids: string[] }) {
     const { cids, allDel } = data;
@@ -48,11 +53,9 @@ export class ApiCategoryController {
     return this.categoryService.getCategoryByName(category_name, isBrief);
   }
 
-  @UseInterceptors(FetchListResponseInterceptor)
   @Get()
+  @UseInterceptors(FetchListResponseInterceptor)
   getCategory() {
-    console.log('123');
-
     return this.categoryService.getAll();
   }
 }

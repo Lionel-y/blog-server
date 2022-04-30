@@ -26,8 +26,13 @@ export class AuthService {
   }
 
   async adminLogin(user: User) {
-    const payload = { username: user.username, sub: user.uid };
+    const payload = {
+      username: user.username,
+      role: user.role,
+      sub: user.uid,
+    };
     return {
+      success: true,
       access_token: this.jwtServicer.sign(payload),
     };
   }
@@ -37,7 +42,11 @@ export class AuthService {
     const _u1 = await this.UserRepo.findOne({ email: user.email });
     if (_u1) {
       if (user.username === _u1.username) {
-        const payload = { username: _u1.username, sub: _u1.uid };
+        const payload = {
+          username: _u1.username,
+          sub: _u1.uid,
+          role: _u1.role,
+        };
         return {
           success: true,
           access_token: this.jwtServicer.sign(payload),
@@ -54,7 +63,11 @@ export class AuthService {
         newUser.username = user.username;
         newUser.email = user.email;
         const ret = await this.UserRepo.save(newUser);
-        const payload = { username: ret.username, sub: ret.uid };
+        const payload = {
+          username: ret.username,
+          sub: ret.uid,
+          role: ret.role,
+        };
         return {
           access_token: this.jwtServicer.sign(payload),
         };

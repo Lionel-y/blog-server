@@ -13,9 +13,11 @@ import { FetchListResponseInterceptor } from 'src/interceptor/fetchListResponse.
 import { OperationResponseInterceptor } from 'src/interceptor/operationResponse.interceptor';
 import { CreateTagDto } from 'src/modules/tag/dto/create-tag.dto';
 import { TagService } from 'src/modules/tag/tag.service';
+import { Roles } from '../auth/decorator/role.decorator';
+import { ROLE } from '../auth/role.enum';
 
 type QueryType = 'brief' | 'detail';
-
+@Roles(ROLE.ADMIN)
 @Controller('/api/tag')
 export class ApiTagController {
   constructor(private readonly tagService: TagService) {}

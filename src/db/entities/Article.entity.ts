@@ -28,7 +28,6 @@ export class Article {
   // 文章标题
   @Column({
     nullable: false,
-    unique: true,
   })
   title: string;
 

@@ -15,11 +15,11 @@ export class AppController {
   @Render('home')
   async home(): Promise<any> {
     const articles = await this.articleService.getAll(true);
-    const hotArticles = this.appService.getHotArticles(articles[0]);
+    const showArticles = articles[0].filter((article) => !article.is_draft);
+    const hotArticles = this.appService.getHotArticles(showArticles);
     const tags = await this.tagService.getAll();
-    console.log(tags);
     return {
-      articles: articles[0],
+      articles: showArticles,
       hotArticles: hotArticles,
       tags: tags[0],
     };

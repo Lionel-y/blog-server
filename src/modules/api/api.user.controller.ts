@@ -10,7 +10,6 @@ import {
 import { UserService } from 'src/modules/user/user.service';
 import { CreateUserDto } from '../user/dto/create-user.dto';
 import { LocalUserAuthGuard } from '../auth/guard/local-auth.guard';
-import { JwtGuard } from '../auth/guard/jwt.guard';
 import { FetchInfoResponseInterceptor } from 'src/interceptor/fetchInfoResponse.interceptor';
 
 @Controller({
@@ -24,11 +23,9 @@ export class ApiUserController {
     return this.userService.create(user);
   }
 
-  @UseGuards(JwtGuard)
-  @UseInterceptors(FetchInfoResponseInterceptor)
   @Get('/profile')
+  @UseInterceptors(FetchInfoResponseInterceptor)
   getProfile(@Request() req) {
-    console.log(req.user);
     return req.user;
   }
 

@@ -1,24 +1,26 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { AdminJwtGuard } from '../auth/guard/jwt.guard';
+import { Roles } from '../auth/decorator/role.decorator';
+import { ROLE } from '../auth/role.enum';
 import { BlogDataService } from '../blogData/blogData.service';
 
+@Roles(ROLE.ADMIN)
 @Controller('/api/data')
 export default class ApiDataController {
   constructor(private readonly blogDataService: BlogDataService) {}
 
-  @UseGuards(AdminJwtGuard)
+  @UseGuards()
   @Get('/card')
   getCardInfo() {
     return this.blogDataService.getCardData();
   }
 
-  @UseGuards(AdminJwtGuard)
+  @UseGuards()
   @Get('/chart')
   getChartInfo() {
     return this.blogDataService.getChartData();
   }
 
-  @UseGuards(AdminJwtGuard)
+  @UseGuards()
   @Get('/contribute')
   getContributeInfo() {
     return this.blogDataService.getContributeData();

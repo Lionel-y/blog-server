@@ -105,11 +105,22 @@ export class BlogDataService {
       .getRawOne();
     const total = { ...ret, ...comemnts };
 
-    const today_ret = await this.BlogDataRepo.findOne({
+    let today_ret = await this.BlogDataRepo.findOne({
       where: { record_date: d },
       select: excludeColumns(BlogData, ['id', 'record_date']),
     });
 
+    if (!!!today_ret) {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //@ts-ignore
+
+      today_ret = {
+        views_count: 0,
+        likes_count: 0,
+        comments_count: 0,
+        articles_count: 0,
+      };
+    }
     return Object.assign(today_ret, total);
   }
 

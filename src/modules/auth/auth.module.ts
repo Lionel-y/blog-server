@@ -9,7 +9,7 @@ import { PassportModule } from '@nestjs/passport';
 import { User } from 'src/db/entities/User.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { JWT_SECRET } from './const';
-import { AdminJwtStrategy, UserJwtStrategy } from './strategies/jwt.strategy';
+import { UserJwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
 
 @Module({
@@ -23,7 +23,6 @@ import { AuthController } from './auth.controller';
     LocalUserStrategy,
     LocalAdminStrategy,
     UserJwtStrategy,
-    AdminJwtStrategy,
   ],
   exports: [AuthService],
   controllers: [AuthController],

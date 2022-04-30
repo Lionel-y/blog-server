@@ -54,12 +54,30 @@
   padding: 0 10px;
   color: var(--color-black);
   cursor: pointer;
+  white-space: nowrap;
 }
 
+#dashboard {
+  display: none;
+}
+
+#dashboard.show {
+  display: flex;
+  align-items: center;
+}
+
+#dashboard.show>i{
+  margin-right: 6px;
+}
 #user-status>.login-btn,
 #user-status.logined>.user-info {
-  display: inline-block;
+  display: flex;
+  align-items: center;
   white-space: nowrap;
+}
+
+#user-status>.login-btn>i {
+  margin-right: 6px;
 }
 
 #user-status.logined>.login-btn,

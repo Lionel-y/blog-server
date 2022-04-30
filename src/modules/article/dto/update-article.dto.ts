@@ -5,4 +5,5 @@ export class UpdateArticleDto {
   readonly author: string;
   tags: string[];
   category: string;
+  is_draft?: boolean;
 }

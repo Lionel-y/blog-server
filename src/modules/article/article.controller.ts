@@ -13,8 +13,7 @@ export class ArticleController {
 
   @Get(':pid')
   @Render('article')
-  // @UseInterceptors(ViewsCounterInterceptor)
-  async article(@Param('pid') pid: string): Promise<any> {
+  async article(@Param('pid') pid: string) {
     const article = await this.articleService.getArticleDetailInfo(pid);
     const tocTokens = [];
     const renderer = new Renderer();

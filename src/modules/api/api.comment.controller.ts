@@ -7,16 +7,18 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { CommentCounterInterceptor } from 'src/interceptor/commentCounter.interceptor';
+import { Roles } from '../auth/decorator/role.decorator';
 import { JwtGuard } from '../auth/guard/jwt.guard';
+import { ROLE } from '../auth/role.enum';
 import { CommentService } from '../comment/comment.service';
 
+@Roles(ROLE.USER)
 @Controller('/api/comment')
 export class ApiCommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  @UseGuards(JwtGuard)
-  @UseInterceptors(CommentCounterInterceptor)
   @Post()
+  @UseInterceptors(CommentCounterInterceptor)
   createComment(
     @Body() comment: { pid: string; content: string },
     @Request() req,

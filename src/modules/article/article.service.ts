@@ -1,8 +1,7 @@
-import { HttpException, Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Article } from 'src/db/entities/Article.entity';
 import { In, Repository } from 'typeorm';
-import { UserService } from '../user/user.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { TagMapView } from 'src/db/entities/TagMap.view.entity';
 import { Category } from 'src/db/entities/Category.entity';
@@ -34,11 +33,25 @@ export class ArticleService {
 
   async save(saveArticleDto: SaveArticleDto) {
     const { pid } = saveArticleDto;
-    if (!!pid) {
+    if (pid && pid.trim() !== '') {
       const ret = await this.updateArticle(pid, saveArticleDto);
       return ret;
     } else {
       const ret = await this.create(saveArticleDto);
+      return ret;
+    }
+  }
+
+  async publish(publishArticleDto: SaveArticleDto) {
+    const { pid } = publishArticleDto;
+    if (pid && pid.trim() !== '') {
+      const ret = await this.updateArticle(pid, {
+        ...publishArticleDto,
+        is_draft: false,
+      });
+      return ret;
+    } else {
+      const ret = await this.create({ ...publishArticleDto, is_draft: false });
       return ret;
     }
   }
@@ -49,13 +62,14 @@ export class ArticleService {
     article.title = createArticleDto.title;
     article.desc = createArticleDto.desc;
     article.content = createArticleDto.content;
-    article.author = 'Lionel';
+    article.author = createArticleDto.author;
     const category = await this.CategoryRepo.findOne({
       category_name: createArticleDto.category,
     });
     article.category = category;
-    article.is_draft = false;
-    const ret = await this.ArticleRepo.save(article);
+    if (typeof createArticleDto.is_draft !== 'undefined') {
+      article.is_draft = createArticleDto.is_draft;
+    }
     const pid = article.pid;
     const tags = createArticleDto.tags;
     // 创建 文章<->标签 映射
@@ -68,15 +82,16 @@ export class ArticleService {
       });
       await this.TagMapRepo.save(tagMaps);
     }
+    const ret = await this.ArticleRepo.save(article);
+
     return ret;
   }
 
   // 更新文章信息
   async updateArticle(pid: string, updateArticleDto: UpdateArticleDto) {
-    // const { pid } = updateArticleDto;
-    const article = await this.ArticleRepo.findOne({ pid });
+    let article = await this.ArticleRepo.findOne({ pid });
     if (article === null) {
-      return new HttpException({ msg: '无对应文章' }, 404);
+      article = await this.create(updateArticleDto);
     }
     // 替换内容
     article.title = updateArticleDto.title;
@@ -86,7 +101,9 @@ export class ArticleService {
       category_name: updateArticleDto.category,
     });
     article.category = category;
-    await this.ArticleRepo.save(article);
+    if (typeof updateArticleDto.is_draft !== 'undefined') {
+      article.is_draft = updateArticleDto.is_draft;
+    }
     // 这里直接删除原有的tagMap 然后建立新的tagMap映射
     await this.TagMapRepo.delete({ pid });
     const tags = updateArticleDto.tags;
@@ -100,6 +117,9 @@ export class ArticleService {
       });
       await this.TagMapRepo.save(tagMaps);
     }
+    await this.ArticleRepo.save(article);
+
+    return article;
   }
 
   // 这里暂时没有处理好ts的问题，暂时将功能进行拆分

@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   Query,
+  Request,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -17,9 +18,10 @@ import { CreateArticleDto } from 'src/modules/article/dto/create-article.dto';
 import { ViewsCounterInterceptor } from 'src/interceptor/viewsCounter.interceptor';
 import { ArticlesCounterInterceptor } from 'src/interceptor/articleCounter.interceptor';
 import { FetchInfoResponseInterceptor } from 'src/interceptor/fetchInfoResponse.interceptor';
-import { UpdateArticleDto } from 'src/modules/article/dto/update-article.dto';
 import { LikeCounterInterceptor } from 'src/interceptor/likeCounter.interceptor';
-import { JwtGuard } from '../auth/guard/jwt.guard';
+import { SaveArticleDto } from '../article/dto/save-article.dto';
+import { Roles } from '../auth/decorator/role.decorator';
+import { ROLE } from '../auth/role.enum';
 
 type QueryType = 'brief' | 'detail';
 
@@ -32,9 +34,7 @@ export class ApiArticleController {
   @Get()
   @UseInterceptors(FetchListResponseInterceptor)
   getArticleList(@Query('type') type?: QueryType) {
-    console.log('api service');
     const isBrief = type === 'brief' ? true : false;
-    console.log(123);
     return this.articleService.getAll(isBrief);
   }
 
@@ -50,29 +50,40 @@ export class ApiArticleController {
     this.articleService.viewCount(pid);
   }
 
-  @Patch(':pid')
+  @Post('/save')
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(OperationResponseInterceptor)
-  updateArticle(
-    @Body() updateArticleDto: UpdateArticleDto,
-    @Param('pid') pid: string,
-  ) {
-    return this.articleService.updateArticle(pid, updateArticleDto);
+  createArticle(@Body() createArticleDto: CreateArticleDto, @Request() req) {
+    createArticleDto.author = req.user.user.username;
+    return this.articleService.save(createArticleDto);
   }
 
-  @Post()
-  @UseInterceptors(OperationResponseInterceptor, ArticlesCounterInterceptor)
-  createArticle(@Body() createArticleDto: CreateArticleDto) {
-    return this.articleService.create(createArticleDto);
+  @Post('/publish')
+  @Roles(ROLE.ADMIN)
+  @UseInterceptors(ArticlesCounterInterceptor, OperationResponseInterceptor)
+  publishArticle(@Body() saveArticleDto: SaveArticleDto, @Request() req) {
+    console.log(req.user);
+    saveArticleDto.author = req.user.username;
+    return this.articleService.publish(saveArticleDto);
+  }
+
+  @Patch('/publish')
+  @Roles(ROLE.ADMIN)
+  @UseInterceptors(OperationResponseInterceptor)
+  updateArticle(@Body() saveArticleDto: SaveArticleDto, @Request() req) {
+    saveArticleDto.author = req.user.username;
+    return this.articleService.publish(saveArticleDto);
   }
 
   @Delete(':pid')
+  @Roles(ROLE.ADMIN)
   @UseInterceptors(OperationResponseInterceptor)
   deleteArticle(@Param('pid') pid: string) {
     return this.articleService.deleteArticle(pid);
   }
 
-  @UseGuards(JwtGuard)
   @Post('/thumb-up/:pid')
+  @Roles(ROLE.USER)
   @UseInterceptors(LikeCounterInterceptor, OperationResponseInterceptor)
   thumbUp(@Param('pid') pid: string) {
     return this.articleService.thumbUp(pid);

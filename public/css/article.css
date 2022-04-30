@@ -211,10 +211,15 @@ body {
 
 .float-box>.item {
   cursor: pointer;
+  background-color: #fff;
+  outline: none;
+  border: none;
+  padding: 0;
 }
 
 .float-box>.item:hover {
   color: var(--color-purple-800);
+
 }
 
 /* .drawer-wrap {

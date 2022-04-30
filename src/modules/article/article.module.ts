@@ -6,7 +6,6 @@ import TagMap from 'src/db/entities/TagMap.entity';
 import { TagMapView } from 'src/db/entities/TagMap.view.entity';
 import { BlogDataModule } from '../blogData/blogData.module';
 import { CommentModule } from '../comment/comment.module';
-import { TagMapModule } from '../tagMap/tagMap.module';
 import { UserModule } from '../user/user.module';
 import { ArticleController } from './article.controller';
 import { ArticleService } from './article.service';
@@ -15,7 +14,6 @@ import { ArticleService } from './article.service';
   imports: [
     TypeOrmModule.forFeature([Article, TagMapView, TagMap, Category]),
     UserModule,
-    TagMapModule,
     BlogDataModule,
     CommentModule,
   ],

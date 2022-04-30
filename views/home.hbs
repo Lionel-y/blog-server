@@ -49,9 +49,15 @@
                   <a>登录</a>
                 </div>
                 <div class='user-info'>
-                  <i class='iconfont icon-author'></i>
-                  <a id='username'></a>
+                  <div>
+                    <i class='iconfont icon-author'></i>
+                    <a id='username'></a>
+                  </div>
                 </div>
+              </li>
+              <li id='dashboard'>
+                <i class='iconfont icon-dashboard'></i>
+                <a href=''>控制台</a>
               </li>
             </ul>
           </nav>
@@ -79,7 +85,11 @@
                         <span>{{date create_at}}</span>
                       </div>
                     </div>
-                    <a class='content' href='/article/{{pid}}' onclick="gotoArticle('{{pid}}')">
+                    <a
+                      class='content'
+                      href='/article/{{pid}}'
+                      onclick="gotoArticle('{{pid}}')"
+                    >
                       <h2 class='title'>{{title}}</h2>
                       <p class='desc'>{{desc}}</p>
                     </a>
