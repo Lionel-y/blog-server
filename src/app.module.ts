@@ -28,7 +28,6 @@ const ENV = process.env.NODE_ENV;
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       entities: ['dist/db/entities/*.entity.js'],
-      synchronize: true,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'admin', 'build'),
