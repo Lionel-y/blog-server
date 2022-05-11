@@ -154,6 +154,7 @@ export class ArticleService {
 
   async getArticleDetailInfo(pid: string, isView = false) {
     const ret = await this.ArticleRepo.findOne({ pid });
+    //TODO: 这里考虑是否要优化下 将浏览数据统计抽离到拦截器里 目前使用的是创建一个专门提供记录的接口
     if (isView && ret) {
       ret.views++;
       this.ArticleRepo.save(ret);
@@ -179,25 +180,22 @@ export class ArticleService {
     return await this.getMultiTags(articles);
   }
 
-  async getAll(isBrief = false): Promise<[Article[], number]> {
-    const selectColumns = isBrief
-      ? excludeColumns(Article, ['content'])
-      : excludeColumns(Article, []);
-
-    // 新逻辑
-    const [articles] = await this.ArticleRepo.findAndCount({
-      select: selectColumns,
+  async getAll() {
+    const articles = await this.ArticleRepo.find({
+      select: excludeColumns(Article, ['content']),
     });
-
+    if (!!!articles) {
+      return [];
+    }
     const ret = await this.getMultiTags(articles);
-
-    return [ret || [], ret.length];
+    return ret;
   }
 
   async deleteArticle(pid: string) {
     return await this.ArticleRepo.delete({ pid });
   }
 
+  //TODO: 可以直接用update函数进行更新操作
   async thumbUp(pid: string) {
     const article = await this.ArticleRepo.findOne({ pid });
     article && article.likes++;

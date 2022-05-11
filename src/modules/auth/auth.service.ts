@@ -22,6 +22,7 @@ export class AuthService {
     const admin = await this.UserRepo.findOne({
       where: { username, password, role: ROLE.ADMIN },
     });
+    console.log(admin);
     return admin;
   }
 

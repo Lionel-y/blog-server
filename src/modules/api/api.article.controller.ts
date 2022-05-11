@@ -8,7 +8,6 @@ import {
   Post,
   Query,
   Request,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FetchListResponseInterceptor } from 'src/interceptor/fetchListResponse.interceptor';
@@ -23,8 +22,6 @@ import { SaveArticleDto } from '../article/dto/save-article.dto';
 import { Roles } from '../auth/decorator/role.decorator';
 import { ROLE } from '../auth/role.enum';
 
-type QueryType = 'brief' | 'detail';
-
 @Controller({
   path: 'api/article',
 })
@@ -33,9 +30,8 @@ export class ApiArticleController {
 
   @Get()
   @UseInterceptors(FetchListResponseInterceptor)
-  getArticleList(@Query('type') type?: QueryType) {
-    const isBrief = type === 'brief' ? true : false;
-    return this.articleService.getAll(isBrief);
+  getArticleList() {
+    return this.articleService.getAll();
   }
 
   @Get(':pid')
@@ -44,6 +40,7 @@ export class ApiArticleController {
     return this.articleService.getArticleDetailInfo(pid);
   }
 
+  // FIXME: 最好使用其他方法替代该接口
   @Get('/view_count/:pid')
   @UseInterceptors(ViewsCounterInterceptor)
   viewCount(@Param('pid') pid: string) {
@@ -54,7 +51,7 @@ export class ApiArticleController {
   @Roles(ROLE.ADMIN)
   @UseInterceptors(OperationResponseInterceptor)
   createArticle(@Body() createArticleDto: CreateArticleDto, @Request() req) {
-    createArticleDto.author = req.user.user.username;
+    createArticleDto.author = req.user.username;
     return this.articleService.save(createArticleDto);
   }
 
@@ -62,7 +59,6 @@ export class ApiArticleController {
   @Roles(ROLE.ADMIN)
   @UseInterceptors(ArticlesCounterInterceptor, OperationResponseInterceptor)
   publishArticle(@Body() saveArticleDto: SaveArticleDto, @Request() req) {
-    console.log(req.user);
     saveArticleDto.author = req.user.username;
     return this.articleService.publish(saveArticleDto);
   }

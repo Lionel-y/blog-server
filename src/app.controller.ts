@@ -14,8 +14,9 @@ export class AppController {
   @Get()
   @Render('home')
   async home(): Promise<any> {
-    const articles = await this.articleService.getAll(true);
-    const showArticles = articles[0].filter((article) => !article.is_draft);
+    const articles = await this.articleService.getAll();
+    console.log(articles);
+    const showArticles = articles.filter((article) => !article.is_draft);
     const hotArticles = this.appService.getHotArticles(showArticles);
     const tags = await this.tagService.getAll();
     return {
